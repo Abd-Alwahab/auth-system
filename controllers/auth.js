@@ -130,6 +130,10 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+const restricPermissions = catchAsync(async (req, res, next) => {
+  // start here
+});
+
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getUsers = getUsers;
