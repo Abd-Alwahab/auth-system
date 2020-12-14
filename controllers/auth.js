@@ -4,6 +4,14 @@ const jwt = require("jsonwebtoken");
 
 const bcrypt = require("bcryptjs");
 
+const sendToken = (user) => {
+  const token = jwt.sign({ id: user._id, name: user.name }, process.env.token_secret, {
+    expiresIn: process.env.token_date,
+  });
+
+  return token;
+};
+
 const getUsers = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: "working....",
@@ -37,13 +45,7 @@ const signup = catchAsync(async (req, res, next) => {
 
   await newUser.save();
 
-  const token = jwt.sign(
-    { id: newUser._id, name: newUser.name },
-    process.env.token_secret,
-    {
-      expiresIn: process.env.token_date,
-    }
-  );
+  const token = sendToken(newUser);
 
   res.status(201).json({
     status: "success",
@@ -77,13 +79,7 @@ const login = catchAsync(async (req, res, next) => {
       message: "wrong email or password, please try agian!",
     });
 
-  const token = jwt.sign(
-    { id: noUser._id, name: noUser.name },
-    process.env.token_secret,
-    {
-      expiresIn: process.env.token_date,
-    }
-  );
+  const token = sendToken(noUser);
 
   res.status(201).json({
     status: "success",
