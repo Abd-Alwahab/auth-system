@@ -87,6 +87,20 @@ const login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+const protect = catchAsync(async (req, res, next) => {
+  //01-Getting the token and cheking if its there!
+  let token;
+  if (req.headers.token) {
+    token = req.headers.token;
+  }
+
+  if (!token)
+    return res.status(400).json({
+      status: "fail",
+      message: "please provide a token!",
+    });
+});
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getUsers = getUsers;
