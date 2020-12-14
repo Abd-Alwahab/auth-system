@@ -2,6 +2,8 @@ const { User } = require("./../models/userModal");
 const catchAsync = require("./../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 
+const { promisify } = require("util");
+
 const bcrypt = require("bcryptjs");
 
 const sendToken = (user) => {
@@ -19,7 +21,7 @@ const getUsers = catchAsync(async (req, res, next) => {
 });
 
 const signup = catchAsync(async (req, res, next) => {
-  const { name, email, password, passwordConfirm } = req.body;
+  const { name, email, password, passwordConfirm, passwordChangedAt } = req.body;
 
   if (!name || !email || !password || !passwordConfirm)
     return res.status(400).json({
@@ -41,6 +43,7 @@ const signup = catchAsync(async (req, res, next) => {
     email,
     password,
     passwordConfirm,
+    passwordChangedAt,
   });
 
   await newUser.save();
@@ -100,7 +103,33 @@ const protect = catchAsync(async (req, res, next) => {
       status: "fail",
       message: "please provide a token!",
     });
+
+  //02-Verify The token
+  const decoded = await promisify(jwt.verify)(token, process.env.token_secret);
+
+  const user = await User.findById(decoded.id);
+
+  //03-Check for the user
+  if (!user)
+    return res.status(404).json({
+      status: "fail",
+      message: "no user find with this token",
+    });
+
+  console.log(user);
+
+  // 04-Check if the user changes his password
+  if (user.changePasswordAfter(decoded.iat))
+    return res.status(400).json({
+      status: "fail",
+      message: "you changed your pasword recntly, please try to login again!",
+    });
+
+  req.user = user;
+
+  next();
 });
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getUsers = getUsers;
+module.exports.protect = protect;
