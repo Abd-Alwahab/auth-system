@@ -129,6 +129,7 @@ const protect = catchAsync(async (req, res, next) => {
 
   next();
 });
+
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getUsers = getUsers;
