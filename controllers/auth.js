@@ -6,6 +6,7 @@ const { promisify } = require("util");
 
 const bcrypt = require("bcryptjs");
 
+// create a custom function for sending the json web token for the user
 const sendToken = (user) => {
   const token = jwt.sign({ id: user._id, name: user.name }, process.env.token_secret, {
     expiresIn: process.env.token_date,
@@ -21,6 +22,13 @@ const getUsers = catchAsync(async (req, res, next) => {
 });
 
 const signup = catchAsync(async (req, res, next) => {
+  // --Steps for handling the signup--
+  // 01-Getting the needed information from the user
+  // 02-Checking if we have any missing info in the body
+  // 03-Checking the user email in our database
+  // 04-If we have no error then we can save the user to the database
+  // 05-Send back a json web token to the user
+
   const { name, email, password, passwordConfirm, passwordChangedAt } = req.body;
 
   if (!name || !email || !password || !passwordConfirm)
@@ -58,6 +66,12 @@ const signup = catchAsync(async (req, res, next) => {
 });
 
 const login = catchAsync(async (req, res, next) => {
+  // ==Steps for handing the login
+  // 01-Getting the email and password from the body
+  // 02-Checking if there is a missing information from the user
+  // 03-Checking if we have a user with the provieded information
+  // 04-Checking if the paassword is correct
+  // 05-Sending back a json web token for the user to log him/her in.
   const { email, password } = req.body;
 
   if (!email || !password)
@@ -91,6 +105,7 @@ const login = catchAsync(async (req, res, next) => {
   });
 });
 
+// create a middleware for checking if the user is logedIn and if so we can give then some permissions
 const protect = catchAsync(async (req, res, next) => {
   //01-Getting the token and cheking if its there!
   let token;
@@ -130,6 +145,7 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// create middleware for restric some action for spesifc users
 const restricPermissions = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
