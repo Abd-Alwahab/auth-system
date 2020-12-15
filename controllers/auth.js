@@ -130,11 +130,21 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-const restricPermissions = catchAsync(async (req, res, next) => {
-  // start here
-});
+const restricPermissions = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(401).json({
+        status: "fail",
+        message: "you do not have permissions!",
+      });
+    }
+
+    next();
+  };
+};
 
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getUsers = getUsers;
 module.exports.protect = protect;
+module.exports.restricPermissions = restricPermissions;
