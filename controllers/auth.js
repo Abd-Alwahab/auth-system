@@ -159,8 +159,32 @@ const restricPermissions = (...roles) => {
   };
 };
 
+const forgotPassword = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user)
+    return res.status(404).json({
+      status: "fail",
+      message: "can not find a user with this email!",
+    });
+
+  const resetToken = user.createPasswordResetToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  console.log(resetToken);
+
+  next();
+});
+
+const resetPassword = catchAsync(async (req, res, next) => {});
+
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getUsers = getUsers;
 module.exports.protect = protect;
 module.exports.restricPermissions = restricPermissions;
+module.exports.forgotPassword = forgotPassword;
+module.exports.resetPassword = resetPassword;
