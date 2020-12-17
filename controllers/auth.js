@@ -160,6 +160,12 @@ const restricPermissions = (...roles) => {
 };
 
 const forgotPassword = catchAsync(async (req, res, next) => {
+  // 01-Getting the email from the request body
+  // 02-Find the user in the database using the provided user email
+  // 03-Checking if theu user is there and if not returing back an error to the user
+  // 04-Creating the token for resting the password
+  // 05-Saving the updated user to the database
+
   const { email } = req.body;
 
   const user = await User.findOne({ email });

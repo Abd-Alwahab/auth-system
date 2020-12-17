@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema({
   passwordResetExpiresDate: Date,
 });
 
+// hash the password before saving it to the database
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -60,6 +61,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// create a custom function top check if the user changes his/her pasword after we provide a json web token for them!
 userSchema.methods.changePasswordAfter = function (JWTTimeStamp) {
   if (this.passwordChangedAt) {
     const changeTimestasmp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
@@ -70,6 +72,7 @@ userSchema.methods.changePasswordAfter = function (JWTTimeStamp) {
   return false;
 };
 
+// create a custom function to create a password rest token using the built in crypto module
 userSchema.methods.createPasswordResetToken = function () {
   const token = crypto.randomBytes(32).toString("hex");
 
@@ -80,6 +83,7 @@ userSchema.methods.createPasswordResetToken = function () {
   return token;
 };
 
+// create the module for the user schema
 const User = mongoose.model("User", userSchema);
 
 module.exports.User = User;
