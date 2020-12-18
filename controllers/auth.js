@@ -1,6 +1,7 @@
 const { User } = require("./../models/userModal");
 const catchAsync = require("./../utils/catchAsync");
 const jwt = require("jsonwebtoken");
+const SendEmail = require("./../utils/email");
 
 const { promisify } = require("util");
 
@@ -180,9 +181,31 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  console.log(resetToken);
+  const passwordResetURL = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/resetPassword/${resetToken}`;
 
-  next();
+  try {
+    await SendEmail({
+      reciver: user.email,
+      subject: "Reset Password",
+      message: `${passwordResetURL}`,
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Your Password Reset Url was sent to your email!",
+    });
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpiresDate = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(500).json({
+      status: "fail",
+      message: "fail to send the email!",
+    });
+  }
 });
 
 const resetPassword = catchAsync(async (req, res, next) => {});
