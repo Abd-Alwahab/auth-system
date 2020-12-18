@@ -166,6 +166,8 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   // 03-Checking if theu user is there and if not returing back an error to the user
   // 04-Creating the token for resting the password
   // 05-Saving the updated user to the database
+  // 06-Generate the needed url for sending it to the user email
+  // 07-Seind the email to the user using the nodemailer and sendGrid
 
   const { email } = req.body;
 
