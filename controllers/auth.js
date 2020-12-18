@@ -210,7 +210,13 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-const resetPassword = catchAsync(async (req, res, next) => {});
+const resetPassword = catchAsync(async (req, res, next) => {
+  // 01-Getting the user base on the token
+  // 02-Checking for the user and the token expires date
+  // 03-Update the user password
+  // 04-save the user to the database
+  // 05-Login the user in (sending json web token)
+});
 
 module.exports.signup = signup;
 module.exports.login = login;
