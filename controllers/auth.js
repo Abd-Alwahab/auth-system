@@ -3,6 +3,7 @@ const catchAsync = require("./../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const SendEmail = require("./../utils/email");
 const crypto = require("crypto");
+// const bcrypt = require("bcryptjs");
 
 const { promisify } = require("util");
 
@@ -235,6 +236,41 @@ const resetPassword = catchAsync(async (req, res, next) => {
   // 04-save the user to the database
   await user.save();
   // 05-Login the user in (sending json web token)
+  const token = sendToken(user);
+
+  res.status(201).json({
+    status: "success",
+
+    token,
+  });
+});
+
+const updatePassword = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  const { currentPassword, newPassword, passwordConfirm } = req.body;
+
+  if (!currentPassword || !newPassword || !passwordConfirm)
+    return res.status(404).json({
+      status: "fail",
+      message: "please provide your password!",
+    });
+  if (!user)
+    return res.status(404).json({
+      status: "fail",
+      message: "can not find a user with this id, please try to login! ",
+    });
+
+  const validPassword = await bcrypt.compare(currentPassword, user.password);
+
+  if (!validPassword)
+    return res.status(400).json({
+      status: "fail",
+      message: "wrong password, please try again!",
+    });
+
+  user.password = newPassword;
+  user.passwordConfirm = passwordConfirm;
+  await user.save();
 
   const token = sendToken(user);
 
@@ -252,3 +288,4 @@ module.exports.protect = protect;
 module.exports.restricPermissions = restricPermissions;
 module.exports.forgotPassword = forgotPassword;
 module.exports.resetPassword = resetPassword;
+module.exports.updatePassword = updatePassword;

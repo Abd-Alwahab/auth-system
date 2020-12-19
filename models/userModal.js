@@ -83,6 +83,7 @@ userSchema.methods.createPasswordResetToken = function () {
   return token;
 };
 
+// trying to update the passwordChangedAt Property before saving the item to the database
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) {
     return next();
