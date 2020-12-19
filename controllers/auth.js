@@ -2,6 +2,7 @@ const { User } = require("./../models/userModal");
 const catchAsync = require("./../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const SendEmail = require("./../utils/email");
+const crypto = require("crypto");
 
 const { promisify } = require("util");
 
@@ -212,10 +213,36 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
 const resetPassword = catchAsync(async (req, res, next) => {
   // 01-Getting the user base on the token
+
+  const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpiresDate: { $gt: Date.now() },
+  });
   // 02-Checking for the user and the token expires date
+
+  if (!user)
+    return res.status(404).json({
+      status: "fail",
+      message: "can not find a user with this token",
+    });
   // 03-Update the user password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpiresDate = undefined;
   // 04-save the user to the database
+  await user.save();
   // 05-Login the user in (sending json web token)
+
+  const token = sendToken(user);
+
+  res.status(201).json({
+    status: "success",
+
+    token,
+  });
 });
 
 module.exports.signup = signup;
