@@ -12,7 +12,7 @@ const {
 router.post("/signup", signup);
 router.post("/login", login);
 router.patch("/forgotPassword", forgotPassword);
-router.post("/resetPassword", resetPassword);
+router.post("/resetPassword/:token", resetPassword);
 router.get("/", protect, restricPermissions("admin"), getUsers);
 
 module.exports = router;
