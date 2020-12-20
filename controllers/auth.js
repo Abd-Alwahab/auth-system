@@ -134,8 +134,6 @@ const protect = catchAsync(async (req, res, next) => {
       message: "no user find with this token",
     });
 
-  console.log(user);
-
   // 04-Check if the user changes his password
   if (user.changePasswordAfter(decoded.iat))
     return res.status(400).json({

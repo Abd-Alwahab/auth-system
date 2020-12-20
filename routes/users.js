@@ -18,7 +18,7 @@ router.patch("/forgotPassword", forgotPassword);
 router.post("/resetPassword/:token", resetPassword);
 router.get("/", protect, restricPermissions("admin"), getUsers);
 
-// router.patch("/me", protect, updateMe);
 router.patch("/updateMyPassword", protect, updatePassword);
+router.patch("/me", protect, updateMe);
 
 module.exports = router;
