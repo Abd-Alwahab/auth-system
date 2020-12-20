@@ -10,7 +10,12 @@ const getUsers = catchAsync(async (req, res, next) => {
 });
 
 const updateMe = catchAsync(async (req, res, next) => {
-  console.log("Update...");
+  // Steps for implementing a update me route
+  // 01-Checking if the user send his/her password and if so , return with an error
+  // 02-Getting the email and the name from the body and validate them
+  // 03-Find the correct user and update the needed information
+  // 04-Send back a json response to notify the client
+
   if (req.body.password || req.body.passwordConfirm)
     return res.status(400).json({
       status: "fail",
@@ -40,6 +45,11 @@ const updateMe = catchAsync(async (req, res, next) => {
 });
 
 const deleteMe = catchAsync(async (req, res, next) => {
+  // Steps for implementing Deactivate a user account
+  // 01-Getting the currently logged IN user
+  // 02-Chekcing is his/her account is already deleted
+  // 03-Deactivate his/her account id everything is passed
+  // 04-Sending a json response to notify the client
   const user = await User.findById(req.user._id);
 
   if (!user.isActive)

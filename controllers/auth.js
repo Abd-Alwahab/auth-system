@@ -238,6 +238,14 @@ const resetPassword = catchAsync(async (req, res, next) => {
 });
 
 const updatePassword = catchAsync(async (req, res, next) => {
+  // Steps for implementing update user password
+  // 01-Getting the currently logged In user
+  // 02-Getting the password and the password confirm rom the request body
+  // 03-Validate the password and the password confirm
+  // 04-Compare the current password with the password in the database
+  // 05-Update the user password and the password confirm and save the user info
+  // 06-Send back a json web token to log the user in and end the response
+
   const user = await User.findById(req.user._id);
   const { currentPassword, newPassword, passwordConfirm } = req.body;
 
@@ -245,11 +253,6 @@ const updatePassword = catchAsync(async (req, res, next) => {
     return res.status(404).json({
       status: "fail",
       message: "please provide your password!",
-    });
-  if (!user)
-    return res.status(404).json({
-      status: "fail",
-      message: "can not find a user with this id, please try to login! ",
     });
 
   const validPassword = await bcrypt.compare(currentPassword, user.password);
