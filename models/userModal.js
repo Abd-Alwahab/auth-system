@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpiresDate: Date,
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // hash the password before saving it to the database

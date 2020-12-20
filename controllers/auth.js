@@ -18,12 +18,6 @@ const sendToken = (user) => {
   return token;
 };
 
-const getUsers = catchAsync(async (req, res, next) => {
-  res.status(200).json({
-    message: "working....",
-  });
-});
-
 const signup = catchAsync(async (req, res, next) => {
   // --Steps for handling the signup--
   // 01-Getting the needed information from the user
@@ -281,7 +275,6 @@ const updatePassword = catchAsync(async (req, res, next) => {
 
 module.exports.signup = signup;
 module.exports.login = login;
-module.exports.getUsers = getUsers;
 module.exports.protect = protect;
 module.exports.restricPermissions = restricPermissions;
 module.exports.forgotPassword = forgotPassword;

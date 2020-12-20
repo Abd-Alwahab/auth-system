@@ -1,6 +1,14 @@
 const catchAsync = require("./../utils/catchAsync");
 const { User } = require("./../models/userModal");
 
+const getUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find({ isActive: true });
+  res.status(200).json({
+    status: "success",
+    data: users,
+  });
+});
+
 const updateMe = catchAsync(async (req, res, next) => {
   console.log("Update...");
   if (req.body.password || req.body.passwordConfirm)
@@ -31,4 +39,23 @@ const updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+const deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user.isActive)
+    return res.status(400).json({
+      status: "fail",
+      message: "user is already deleted, please try to contact us!",
+    });
+
+  user.isActive = false;
+
+  res.status(200).json({
+    status: "success",
+    message: "your account was deleted, see you next ",
+  });
+});
+
 module.exports.updateMe = updateMe;
+module.exports.deleteMe = deleteMe;
+module.exports.getUsers = getUsers;

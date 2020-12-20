@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const {
   signup,
-  getUsers,
+
   login,
   protect,
   restricPermissions,
@@ -10,7 +10,7 @@ const {
   updatePassword,
 } = require("./../controllers/auth");
 
-const { updateMe } = require("./../controllers/users");
+const { updateMe, getUsers, deleteMe } = require("./../controllers/users");
 
 router.post("/signup", signup);
 router.post("/login", login);
@@ -20,5 +20,6 @@ router.get("/", protect, restricPermissions("admin"), getUsers);
 
 router.patch("/updateMyPassword", protect, updatePassword);
 router.patch("/me", protect, updateMe);
+router.delete("/me", protect, deleteMe);
 
 module.exports = router;
