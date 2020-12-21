@@ -32,6 +32,18 @@ const userSchema = new mongoose.Schema({
     max: [50, "your password can not be more than 50 letters!"],
   },
 
+  photo: {
+    url: {
+      type: String,
+      default: "",
+    },
+    public_id: {
+      type: String,
+      default: "",
+      // required: [true, "user photo can not be empty"],
+    },
+  },
+
   passwordConfirm: {
     type: String,
     required: [true, "please provide a password confirm!"],

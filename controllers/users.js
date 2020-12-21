@@ -1,5 +1,6 @@
 const catchAsync = require("./../utils/catchAsync");
 const { User } = require("./../models/userModal");
+const { uploadFromBuffer, deleteImage } = require("./../utils/imageHandle");
 
 const getUsers = catchAsync(async (req, res, next) => {
   const users = await User.find({ isActive: true });
@@ -16,31 +17,59 @@ const updateMe = catchAsync(async (req, res, next) => {
   // 03-Find the correct user and update the needed information
   // 04-Send back a json response to notify the client
 
+  const userId = req.user._id;
+  const user = await User.findById(userId);
+
   if (req.body.password || req.body.passwordConfirm)
     return res.status(400).json({
       status: "fail",
       message: "Do not provide your password here, try different route!",
     });
 
-  const { email, name } = req.body;
-  if (!email && !name)
-    return res.status(400).json({
-      status: "fail",
-      message: "please provide an email or a name!",
-    });
+  let result = {
+    secure_url: null,
+    public_id: null,
+  };
 
-  const user = await User.findByIdAndUpdate(
+  let userPhoto;
+  if (!req.file) {
+    result = {
+      public_id: user.photo.public_id,
+      secure_url: user.photo.url,
+    };
+  }
+
+  if (req.file) {
+    if (user.photo.public_id !== "" && user.photo.secure_url !== "") {
+      await deleteImage(user.photo.public_id);
+    }
+
+    userPhoto = req.file.processedImage;
+    result = await uploadFromBuffer(userPhoto.data);
+  }
+
+  let { email, name } = req.body;
+  if (!email || !name) {
+    email = req.user.email;
+    name = req.user.name;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
     {
-      name: req.body.name,
-      email: req.body.email,
+      name: name,
+      email: email,
+      photo: {
+        url: result.secure_url,
+        public_id: result.public_id,
+      },
     },
     { new: true, runValidators: true }
   );
 
   return res.status(200).json({
     status: "success",
-    message: user,
+    message: updatedUser,
   });
 });
 

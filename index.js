@@ -6,6 +6,7 @@ const helemt = require("helmet");
 const mongoSnatize = require("express-mongo-sanitize");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
+const cloudinary = require("cloudinary");
 require("dotenv").config();
 
 const app = express();
@@ -27,6 +28,12 @@ app.use(
   })
 );
 app.use("/api/v1/users", authRouter);
+
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.cloud_api,
+  api_secret: process.env.cloud_secrit,
+});
 
 // const port = process.env.PORT || 8080;
 // jUlTNpeCwjXWC8dh
