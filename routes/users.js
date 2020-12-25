@@ -11,7 +11,7 @@ const {
 } = require("./../controllers/auth");
 const { upload, resizeUserPhoto } = require("./../utils/imageHandle");
 
-const { updateMe, getUsers, deleteMe } = require("./../controllers/users");
+const { updateMe, getUsers, getUser, deleteMe } = require("./../controllers/users");
 
 // Authentication Routes
 router.post("/signup", signup);
@@ -20,6 +20,7 @@ router.patch("/forgotPassword", forgotPassword);
 router.post("/resetPassword/:token", resetPassword);
 
 router.get("/", protect, restricPermissions("admin"), getUsers);
+router.get("/:id", protect, restricPermissions("admin"), getUser);
 
 // Update My Info Route
 router.patch("/updateMyPassword", protect, updatePassword);

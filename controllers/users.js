@@ -10,6 +10,21 @@ const getUsers = catchAsync(async (req, res, next) => {
   });
 });
 
+const getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ _id: req.params.id, isActive: true });
+
+  if (!user)
+    return res.status(404).json({
+      status: "fail",
+      message: "can not find a user with this id, please try with another id!",
+    });
+
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
+
 const updateMe = catchAsync(async (req, res, next) => {
   // Steps for implementing a update me route
   // 01-Checking if the user send his/her password and if so , return with an error
@@ -98,3 +113,4 @@ const deleteMe = catchAsync(async (req, res, next) => {
 module.exports.updateMe = updateMe;
 module.exports.deleteMe = deleteMe;
 module.exports.getUsers = getUsers;
+module.exports.getUser = getUser;
