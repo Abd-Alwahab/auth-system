@@ -1,6 +1,13 @@
 const catchAsync = require("./../utils/catchAsync");
+const { Post } = require("./../models/postModal");
 
 const getPosts = catchAsync(async (req, res, next) => {
+  const posts = await Post.find();
+
+  res.status(200).json({
+    status: "success",
+    data: posts,
+  });
   console.log("Get All Posts Handler");
 });
 
