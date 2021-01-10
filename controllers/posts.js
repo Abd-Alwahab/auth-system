@@ -8,11 +8,21 @@ const getPosts = catchAsync(async (req, res, next) => {
     status: "success",
     data: posts,
   });
-  console.log("Get All Posts Handler");
 });
 
 const getPostDetails = catchAsync(async (req, res, next) => {
-  console.log("Get All Posts Handler");
+  const post = await Post.find({ _id: req.params.id });
+
+  if (!post)
+    res.status(404).json({
+      status: "fail",
+      data: "can not find post with this id",
+    });
+
+  res.status(200).json({
+    status: "success",
+    data: posts,
+  });
 });
 
 const createPost = catchAsync(async (req, res, next) => {
