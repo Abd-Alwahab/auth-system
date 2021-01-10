@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const authRouter = require("./routes/users");
+const postsRouter = require("./routes/posts");
 const rateLimit = require("express-rate-limit");
 const helemt = require("helmet");
 const mongoSnatize = require("express-mongo-sanitize");
@@ -28,6 +29,7 @@ app.use(
   })
 );
 app.use("/api/v1/users", authRouter);
+app.use("/api/v1/posts", postsRouter);
 
 cloudinary.config({
   cloud_name: process.env.cloud_name,
