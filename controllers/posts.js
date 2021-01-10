@@ -34,7 +34,18 @@ const editPost = catchAsync(async (req, res, next) => {
 });
 
 const deletePost = catchAsync(async (req, res, next) => {
-  console.log("Delete Post Handler");
+  const post = await Post.findByIdAndRemove(req.params.id);
+
+  if (!post)
+    res.status(404).json({
+      status: "fail",
+      data: "post is already deleted",
+    });
+
+  res.status(200).json({
+    status: "success",
+    data: null,
+  });
 });
 
 module.exports.getPosts = getPosts;
