@@ -19,3 +19,9 @@ const editPost = catchAsync(async (req, res, next) => {
 const deletePost = catchAsync(async (req, res, next) => {
   console.log("Delete Post Handler");
 });
+
+module.exports.getPosts = getPosts;
+module.exports.getPostDetails = getPostDetails;
+module.exports.createPost = createPost;
+module.exports.editPost = editPost;
+module.exports.deletePost = deletePost;
