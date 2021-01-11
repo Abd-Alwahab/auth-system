@@ -26,7 +26,7 @@ const getPostDetails = catchAsync(async (req, res, next) => {
 });
 
 const createPost = catchAsync(async (req, res, next) => {
-  console.log("Create Post Handler");
+  const { title, description } = req.body;
 });
 
 const editPost = catchAsync(async (req, res, next) => {
