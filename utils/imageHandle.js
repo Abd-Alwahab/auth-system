@@ -38,6 +38,23 @@ const resizeUserPhoto = async (req, res, next) => {
   next();
 };
 
+const resizePostPhoto = async (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  const processedImage = await sharp(req.file.buffer)
+    .resize(110, 800)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toBuffer({ resolveWithObject: true });
+
+  //saving the buffer to a new file object
+  req.file.processedImage = processedImage;
+
+  next();
+};
+
 // using cloudinary to upload images as a buffer and save it to the cloud
 let uploadFromBuffer = (buffer) => {
   return new Promise((resolve, reject) => {
@@ -73,5 +90,6 @@ let deleteImage = (imageId) => {
 
 module.exports.upload = upload;
 module.exports.resizeUserPhoto = resizeUserPhoto;
+module.exports.resizePostPhoto = resizePostPhoto;
 module.exports.uploadFromBuffer = uploadFromBuffer;
 module.exports.deleteImage = deleteImage;
