@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema({
   },
 
   photo: {
-    url: {
+    secure_url: {
       type: String,
       default: "",
     },
@@ -18,6 +18,8 @@ const postSchema = new mongoose.Schema({
       default: "",
       // required: [true, "user photo can not be empty"],
     },
+
+    required: [true, "please provide a post photo!"],
   },
 
   description: {
