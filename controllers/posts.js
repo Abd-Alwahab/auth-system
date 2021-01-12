@@ -63,7 +63,34 @@ const createPost = catchAsync(async (req, res, next) => {
 });
 
 const editPost = catchAsync(async (req, res, next) => {
-  console.log("Edit Post Handler");
+  const post = await Post.findById(req.params.id);
+  if (!post)
+    res.status(404).json({
+      status: "fail",
+      data: "can not find a post with this id!",
+    });
+
+  const { title, description } = req.body;
+
+  if (!title) title = post.title;
+  if (!description) description = post.description;
+
+  let postPhoto;
+  if (!req.file) {
+    result = {
+      public_id: post.photo.public_id,
+      secure_url: post.photo.secure_url,
+    };
+  }
+
+  if (req.file) {
+    if (post.photo.public_id !== "" && post.photo.secure_url !== "") {
+      await deleteImage(post.photo.public_id);
+    }
+
+    postPhoto = req.file.processedImage;
+    result = await uploadFromBuffer(postPhoto.data);
+  }
 });
 
 const deletePost = catchAsync(async (req, res, next) => {
