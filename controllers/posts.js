@@ -91,6 +91,20 @@ const editPost = catchAsync(async (req, res, next) => {
     postPhoto = req.file.processedImage;
     result = await uploadFromBuffer(postPhoto.data);
   }
+
+  const updatedPost = await Post.findByIdAndUpdate(req.params.id, {
+    title,
+    description,
+    photo: {
+      public_id: result.public_id,
+      secure_url: result.secure_url,
+    },
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: updatedPost,
+  });
 });
 
 const deletePost = catchAsync(async (req, res, next) => {
